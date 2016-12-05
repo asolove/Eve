@@ -44,7 +44,7 @@ bind @browser
 If the snake is present on a cell, color it in:
 ```
 search @session @browser
-  cell = [#cell x y snake]
+  cell = [#cell x y snakeStart]
   [#span cell style]
 
 bind @browser
@@ -53,7 +53,7 @@ bind @browser
 ```
 
 ## Move snake
-The snake moves one square by dy/dx per frame
+The snake moves one square by dy/dx per frame.
 ```
 search
 	[#time frames]
@@ -65,20 +65,25 @@ commit
   board.frame := frames
 ```
 
-And each cell the snake ever appears on needs to be marked as having the snake:
+Wherever the snake's head appears, we mark that cell as having been entered by the snake in that frame.
 ```
 search
+	[#board frame]
 	snake = [#snake x y]
   cell = [#cell x y]
 
 commit
-	cell.snake := true
+	cell.snakeStart := frame
 ```
 
+After enough time has passed, we should mark the cell as no longer part of the snake. Because the snake advances one space per frame, a cell is no longer part of the snake if its starting frame is less than the current frame minus the snake's length.
 ```
 search
-	[#time frames]
+	[#board frame]
+  [#snake length]
+  cell = [#cell snakeStart]
+  snakeStart + length < frame
   
-bind @view
-	frames
+commit
+	cell.snakeStart := none
 ```
