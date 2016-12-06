@@ -7,73 +7,37 @@ search
   width = 40
   
 commit
-  board = [#board width: width frame:0]
   [#cell x: range[from: 0 to: width - 1]]
-```
-
-Next we set up the snake with an initial position, speed, and length:
-```eve
-commit   
-  [#snake x: 0 length: 10]
 ```
 
 ## Draw the game
 Start by showing a grid of the cells with their default styling.
 ```eve
 search
-	board = [#board]
-  snake = [#snake]
   cell = [#cell x]
-  
 bind @browser
   [#div children:
-    [#div board children:
-    	[#span cell sort: x, style: [height: 10, width: 10, backgroundColor: "black", display: "inline-block"]]]]
+    [#span cell sort: x, style: [height: 10, width: 10, backgroundColor: "black", display: "inline-block"]]]
 ```
 
 If the snake is present on a cell, color it green.
 ```
 search @session @browser
-  cell = [#cell x snakeStart]
+  cell = [#cell selected]
   [#span cell style]
 
 bind @browser
   style.backgroundColor := "green"
 ```
 
-## Move snake
-The snake moves one square by dy/dx per frame.
+## Select cell
+Pick the cell per frame.
 ```
 search
 	[#time frames]
-  board = [#board width frame != frames]
-	snake = [#snake x]
-  x < width
+  x = mod[value: frames by: 40]
+	cell = [#cell x]
   
-commit
-	snake.x := x + 1
-  board.frame := frames
-```
-
-Wherever the snake's head appears, we mark that cell as having been entered by the snake in that frame.
-```
-search
-	[#board frame]
-	snake = [#snake x]
-  cell = [#cell x]
-
-commit
-	cell.snakeStart := frame
-```
-
-After enough time has passed, we should mark the cell as no longer part of the snake. Because the snake advances one space per frame, a cell is no longer part of the snake if its starting frame is less than the current frame minus the snake's length.
-```
-search
-	[#board frame]
-  [#snake length]
-  cell = [#cell snakeStart]
-  snakeStart + length < frame
-  
-commit
-	cell.snakeStart := none
+bind
+	cell.selected := true
 ```
