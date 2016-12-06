@@ -20,7 +20,7 @@ bind @browser
     [#span cell sort: x, style: [height: 10, width: 10, backgroundColor: "black", display: "inline-block"]]]
 ```
 
-If the snake is present on a cell, color it green.
+If a cell is currently selected, color it green.
 ```
 search @session @browser
   cell = [#cell selected]
@@ -31,7 +31,7 @@ bind @browser
 ```
 
 ## Select cell
-Pick the cell per frame.
+Every frame advance one cell, looping around when it gets to the end.
 ```
 search
 	[#time frames]
