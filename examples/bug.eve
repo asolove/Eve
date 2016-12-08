@@ -1,0 +1,43 @@
+# Snake
+
+## Initialization
+We need to create the cells of the game board:
+```eve
+search
+  width = 40
+  
+commit
+  [#cell x: range[from: 0 to: width - 1]]
+```
+
+## Draw the game
+Start by showing a grid of the cells with their default styling.
+```eve
+search
+  cell = [#cell x]
+bind @browser
+  [#div children:
+    [#span cell sort: x, style: [height: 10, width: 10, backgroundColor: "black", display: "inline-block"]]]
+```
+
+If a cell is currently selected, color it green.
+```
+search @session @browser
+  cell = [#cell selected]
+  [#span cell style]
+
+bind @browser
+  style.backgroundColor := "green"
+```
+
+## Select cell
+Every frame advance one cell, looping around when it gets to the end.
+```
+search
+	[#time frames]
+  x = mod[value: frames by: 40]
+	cell = [#cell x]
+  
+bind
+	cell.selected := true
+```
